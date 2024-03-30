@@ -20,4 +20,8 @@ build:
 run:
 	docker run --rm --network=host --name downloader_email -p 587:587 --env-file ./.env downloader_email
 
-.PHONY: update_swagger build_rabbitmq run_rabbitmq run_dev up build run
+push-image:
+	docker tag downloader_email ashkanaz2828/downloader_email
+	docker push ashkanaz2828/downloader_email
+
+.PHONY: update_swagger build_rabbitmq run_rabbitmq run_dev up build run push-image
