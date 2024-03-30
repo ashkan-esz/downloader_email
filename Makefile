@@ -18,6 +18,6 @@ build:
 	docker image build --network=host -t downloader_email .
 
 run:
-	docker run --restart unless-stopped --network=host --name downloader_email -p 587:587 downloader_email
+	docker run --rm --network=host --name downloader_email -p 587:587 --env-file ./.env downloader_email
 
 .PHONY: update_swagger build_rabbitmq run_rabbitmq run_dev up build run
