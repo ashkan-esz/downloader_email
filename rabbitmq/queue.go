@@ -1,7 +1,8 @@
 package rabbitmq
 
 import (
-	"log"
+	"downloader_email/pkg"
+	"fmt"
 
 	amqp "github.com/rabbitmq/amqp091-go"
 )
@@ -33,7 +34,8 @@ func (r *rabbit) createQueuesAndBind() {
 	}
 	_, err := r.CreateQueue(emailConfig)
 	if err != nil {
-		log.Printf("error creating queue %s: %s\n", EmailQueue, err)
+		message := fmt.Sprintf("error creating queue %s: %s", EmailQueue, err)
+		pkg.SaveError(message, err)
 	}
 
 	emailConfigBindConfig := ConfigBindQueue{
@@ -44,7 +46,8 @@ func (r *rabbit) createQueuesAndBind() {
 	}
 	err = r.BindQueueExchange(emailConfigBindConfig)
 	if err != nil {
-		log.Printf("error binding queue %s: %s\n", EmailQueue, err)
+		message := fmt.Sprintf("error binding queue %s: %s", EmailQueue, err)
+		pkg.SaveError(message, err)
 	}
 }
 

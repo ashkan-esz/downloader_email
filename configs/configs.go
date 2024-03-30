@@ -18,6 +18,8 @@ type ConfigStruct struct {
 	MailServerUsername string
 	MailServerPassword string
 	UserSessionPage    string
+	SentryDns          string
+	PrintErrors        bool
 }
 
 var configs = ConfigStruct{}
@@ -28,7 +30,7 @@ func GetConfigs() ConfigStruct {
 
 func LoadEnvVariables() {
 	if err := godotenv.Load(); err != nil {
-		log.Fatalf("Error loading .env file: %v", err)
+		log.Printf("Error loading .env file: %v", err)
 	}
 
 	configs.MainServerAddress = os.Getenv("MAIN_SERVER_ADDRESS")
@@ -42,4 +44,6 @@ func LoadEnvVariables() {
 	configs.MailServerUsername = os.Getenv("MAILSERVER_USERNAME")
 	configs.MailServerPassword = os.Getenv("MAILSERVER_PASSWORD")
 	configs.UserSessionPage = os.Getenv("USER_SESSION_PAGE")
+	configs.SentryDns = os.Getenv("SENTRY_DNS")
+	configs.PrintErrors = os.Getenv("PRINT_ERRORS") == "true"
 }

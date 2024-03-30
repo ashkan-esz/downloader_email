@@ -1,7 +1,8 @@
 package rabbitmq
 
 import (
-	"log"
+	"downloader_email/pkg"
+	"fmt"
 
 	amqp "github.com/rabbitmq/amqp091-go"
 )
@@ -27,7 +28,8 @@ func (r *rabbit) createExchanges() {
 	}
 	err := r.CreateExchange(emailConfig)
 	if err != nil {
-		log.Printf("error creating exchange %v: %s\n", EmailExchange, err)
+		message := fmt.Sprintf("error creating exchange %v: %s", EmailExchange, err)
+		pkg.SaveError(message, err)
 	}
 }
 

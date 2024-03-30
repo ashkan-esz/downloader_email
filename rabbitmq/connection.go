@@ -3,7 +3,8 @@ package rabbitmq
 import (
 	"context"
 	"downloader_email/configs"
-	"log"
+	"downloader_email/pkg"
+	"fmt"
 	"runtime"
 	"sync"
 	"time"
@@ -48,7 +49,7 @@ func Start(ctx context.Context) RabbitMQ {
 		consumerChannelPool: make([]*amqp.Channel, 0),
 		producerChannelPool: make([]*amqp.Channel, 0),
 	}
-	conf := ConfigConnection{URI: configs.GetConfigs().RabbitMqUrl, PrefetchCount: 3, PublishChannelPoolCount: 5}
+	conf := ConfigConnection{URI: configs.GetConfigs().RabbitMqUrl, PrefetchCount: 3, PublishChannelPoolCount: 1}
 	rabbitmq.Setup(ctx, conf)
 	return rabbitmq
 }
@@ -62,7 +63,8 @@ func (r *rabbit) Setup(ctx context.Context, config ConfigConnection) {
 		for {
 			notifyClose, err := r.Connect(config)
 			if err != nil {
-				log.Printf("error connecting to rabbitmq: [%s]\n", err)
+				message := fmt.Sprintf("error connecting to rabbitmq: [%s]", err)
+				pkg.SaveError(message, err)
 				time.Sleep(time.Second * 5)
 				continue
 			}
@@ -178,14 +180,16 @@ func closeConnections(r *rabbit) {
 	if r.chConsumer != nil {
 		err = r.chConsumer.Close()
 		if err != nil {
-			log.Printf("Error closing consumer channel: [%s]\n", err)
+			message := fmt.Sprintf("Error closing consumer channel: [%s]", err)
+			pkg.SaveError(message, err)
 		}
 	}
 	for i, consumeChan := range r.consumerChannelPool {
 		if consumeChan != nil {
 			err = consumeChan.Close()
 			if err != nil {
-				log.Printf("Error closing consumer channel %v: [%s]\n", i, err)
+				message := fmt.Sprintf("Error closing consumer channel %v: [%s]", i, err)
+				pkg.SaveError(message, err)
 			}
 		}
 	}
@@ -193,14 +197,16 @@ func closeConnections(r *rabbit) {
 	if r.chProducer != nil {
 		err = r.chProducer.Close()
 		if err != nil {
-			log.Printf("Error closing producer channel: [%s]\n", err)
+			message := fmt.Sprintf("Error closing producer channel: [%s]", err)
+			pkg.SaveError(message, err)
 		}
 	}
 	for i, produceChan := range r.producerChannelPool {
 		if produceChan != nil {
 			err = produceChan.Close()
 			if err != nil {
-				log.Printf("Error closing producer channel %v: [%s]\n", i, err)
+				message := fmt.Sprintf("Error closing producer channel %v: [%s]", i, err)
+				pkg.SaveError(message, err)
 			}
 		}
 	}
@@ -208,13 +214,15 @@ func closeConnections(r *rabbit) {
 	if r.producerConn != nil {
 		err = r.producerConn.Close()
 		if err != nil {
-			log.Printf("Error closing connection: [%s]\n", err)
+			message := fmt.Sprintf("Error closing connection: [%s]", err)
+			pkg.SaveError(message, err)
 		}
 	}
 	if r.consumerConn != nil {
 		err = r.consumerConn.Close()
 		if err != nil {
-			log.Printf("Error closing connection: [%s]\n", err)
+			message := fmt.Sprintf("Error closing connection: [%s]", err)
+			pkg.SaveError(message, err)
 		}
 	}
 }

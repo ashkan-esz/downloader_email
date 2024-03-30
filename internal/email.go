@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/tls"
 	"downloader_email/configs"
+	"downloader_email/pkg"
 	"downloader_email/rabbitmq"
 	"encoding/json"
 	"fmt"
@@ -11,7 +12,9 @@ import (
 	"os"
 	"runtime/debug"
 	"sync"
+	"time"
 
+	"github.com/getsentry/sentry-go"
 	amqp "github.com/rabbitmq/amqp091-go"
 	gomail "gopkg.in/gomail.v2"
 )
@@ -38,6 +41,7 @@ func NewEmailService(rabbit rabbitmq.RabbitMQ) *EmailService {
 
 	dial, err := d.Dial()
 	if err != nil {
+		sentry.CaptureException(err)
 		panic(err)
 	}
 
@@ -58,7 +62,8 @@ func NewEmailService(rabbit rabbitmq.RabbitMQ) *EmailService {
 			rabbitmq.NotifySetupDone(openConChan)
 			<-openConChan
 			if err := rabbit.Consume(ctx, emailConfig, &emailSvc, EmailConsumer); err != nil {
-				log.Printf("error consuming from queue %s: %s\n", rabbitmq.EmailQueue, err)
+				message := fmt.Sprintf("error consuming from queue %s: %s", rabbitmq.EmailQueue, err)
+				pkg.SaveError(message, err)
 			}
 		}()
 	}
@@ -122,11 +127,16 @@ func EmailConsumer(d *amqp.Delivery, extraConsumerData interface{}) {
 				"err", err,
 			)
 		}
+
+		sentry.CurrentHub().Recover(err)
+		sentry.Flush(time.Second * 5)
+
 		//if err = d.Nack(false, true); err != nil {
 		//	log.Printf("error nacking [email] message: %s\n", err)
 		//}
 		if err = d.Ack(false); err != nil {
-			log.Printf("error acking [email] message: %s\n", err)
+			message := fmt.Sprintf("error acking [email] message: %s", err)
+			pkg.SaveError(message, nil)
 		}
 	}()
 	// run as rabbitmq consumer
@@ -203,15 +213,18 @@ func EmailConsumer(d *amqp.Delivery, extraConsumerData interface{}) {
 	err = gomail.Send(emailSvc.dial, m)
 
 	if err != nil {
-		log.Printf("error on sending [%s] email: %s\n", channelMessage.Type, err)
+		message := fmt.Sprintf("error on sending [%s] email: %s", channelMessage.Type, err)
+		pkg.SaveError(message, err)
 		emailSvc.dialLock.RUnlock()
 		emailSvc.dialLock.Lock()
 		defer emailSvc.dialLock.Unlock()
 		dial, err := emailSvc.dialer.Dial()
 		if err != nil {
-			log.Printf("error on dialing smtp server: %s\n", err)
+			message := fmt.Sprintf("error on dialing smtp server: %s", err)
+			pkg.SaveError(message, err)
 			if err = d.Nack(false, true); err != nil {
-				log.Printf("error nacking [email] message: %s\n", err)
+				message := fmt.Sprintf("error nacking [email] message: %s", err)
+				pkg.SaveError(message, err)
 			}
 		} else {
 			emailSvc.dial = dial
@@ -219,11 +232,13 @@ func EmailConsumer(d *amqp.Delivery, extraConsumerData interface{}) {
 		}
 
 		if err = d.Nack(false, true); err != nil {
-			log.Printf("error nacking [email] message: %s\n", err)
+			message := fmt.Sprintf("error nacking [email] message: %s", err)
+			pkg.SaveError(message, err)
 		}
 	} else {
 		if err = d.Ack(false); err != nil {
-			log.Printf("error acking [email] message: %s\n", err)
+			message := fmt.Sprintf("error acking [email] message: %s", err)
+			pkg.SaveError(message, err)
 		}
 	}
 }

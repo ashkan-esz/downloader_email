@@ -7,7 +7,7 @@ email sender service of the [downloader_api](https://github.com/ashkan-esz/downl
 making email service a microservice and handle the entire project better
 
 ## How to use
-
+docker repository is ashkanaz2828/downloader_email
 
 ## Environment Variables
 
@@ -24,10 +24,11 @@ To run this project, you will need to add the following environment variables to
 | **`MAILSERVER_USERNAME`**  |                                                                                          | `false`  |               |
 | **`MAILSERVER_PASSWORD`**  |                                                                                          | `false`  |               |
 | **`USER_SESSION_PAGE`**    |                                                                                          | `false`  |               |
+| **`SENTRY_DNS`**           | see [sentry.io](https://sentry.io)                                                       | `false`  |               |
+| **`PRINT_ERRORS`**         |                                                                                          | `false`  | false         |
 
 
-## Extra
-- docker repository is ashkanaz2828/downloader_email
+## Local Smtp Server
 - mailServer:
     1. https://hub.docker.com/r/boky/postfix
     2. https://docker-mailserver.github.io/docker-mailserver/latest/usage/
