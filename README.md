@@ -13,19 +13,20 @@ docker repository is ashkanaz2828/downloader_email
 
 To run this project, you will need to add the following environment variables to your .env file
 
-| Prop                       | Description                                                                              | Required | Default Value |
-|----------------------------|------------------------------------------------------------------------------------------|----------|---------------|
-| **`PORT`**                 | server port                                                                              | `false`  | 3000          |
-| **`CORS_ALLOWED_ORIGINS`** | address joined by `---` example: https://download-admin.com---https:download-website.com | `false`  |               |
-| **`RABBITMQ_URL`**         |                                                                                          | `true`   |               |
-| **`MAIN_SERVER_ADDRESS`**  | the url of the downloader_api (main server)                                              | `true`   |               |
-| **`MAILSERVER_HOST`**      |                                                                                          | `false`  | localhost     |
-| **`MAILSERVER_PORT`**      |                                                                                          | `false`  | 587           |
-| **`MAILSERVER_USERNAME`**  |                                                                                          | `false`  |               |
-| **`MAILSERVER_PASSWORD`**  |                                                                                          | `false`  |               |
-| **`USER_SESSION_PAGE`**    |                                                                                          | `false`  |               |
-| **`SENTRY_DNS`**           | see [sentry.io](https://sentry.io)                                                       | `false`  |               |
-| **`PRINT_ERRORS`**         |                                                                                          | `false`  | false         |
+| Prop                                   | Description                                                                              | Required | Default Value |
+|----------------------------------------|------------------------------------------------------------------------------------------|----------|---------------|
+| **`PORT`**                             | server port                                                                              | `false`  | 3000          |
+| **`CORS_ALLOWED_ORIGINS`**             | address joined by `---` example: https://download-admin.com---https:download-website.com | `false`  |               |
+| **`RABBITMQ_URL`**                     |                                                                                          | `true`   |               |
+| **`INITIAL_WAIT_FOR_MAIL_SERVER_SEC`** |                                                                                          | `false`  | localhost     |
+| **`MAIN_SERVER_ADDRESS`**              | the url of the downloader_api (main server)                                              | `true`   |               |
+| **`MAILSERVER_HOST`**                  |                                                                                          | `false`  | localhost     |
+| **`MAILSERVER_PORT`**                  |                                                                                          | `false`  | 587           |
+| **`MAILSERVER_USERNAME`**              |                                                                                          | `false`  |               |
+| **`MAILSERVER_PASSWORD`**              |                                                                                          | `false`  |               |
+| **`USER_SESSION_PAGE`**                |                                                                                          | `false`  |               |
+| **`SENTRY_DNS`**                       | see [sentry.io](https://sentry.io)                                                       | `false`  |               |
+| **`PRINT_ERRORS`**                     |                                                                                          | `false`  | false         |
 
 
 ## Local Smtp Server

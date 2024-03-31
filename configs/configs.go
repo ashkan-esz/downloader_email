@@ -10,16 +10,17 @@ import (
 )
 
 type ConfigStruct struct {
-	MainServerAddress  string
-	RabbitMqUrl        string
-	CorsAllowedOrigins []string
-	MailServerHost     string
-	MailServerPort     int
-	MailServerUsername string
-	MailServerPassword string
-	UserSessionPage    string
-	SentryDns          string
-	PrintErrors        bool
+	MainServerAddress        string
+	RabbitMqUrl              string
+	CorsAllowedOrigins       []string
+	InitialWaitForMailServer int
+	MailServerHost           string
+	MailServerPort           int
+	MailServerUsername       string
+	MailServerPassword       string
+	UserSessionPage          string
+	SentryDns                string
+	PrintErrors              bool
 }
 
 var configs = ConfigStruct{}
@@ -39,6 +40,7 @@ func LoadEnvVariables() {
 	for i := range configs.CorsAllowedOrigins {
 		configs.CorsAllowedOrigins[i] = strings.TrimSpace(configs.CorsAllowedOrigins[i])
 	}
+	configs.InitialWaitForMailServer, _ = strconv.Atoi(os.Getenv("INITIAL_WAIT_FOR_MAIL_SERVER_SEC"))
 	configs.MailServerHost = os.Getenv("MAILSERVER_HOST")
 	configs.MailServerPort, _ = strconv.Atoi(os.Getenv("MAILSERVER_PORT"))
 	configs.MailServerUsername = os.Getenv("MAILSERVER_USERNAME")

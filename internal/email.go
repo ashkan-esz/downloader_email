@@ -36,6 +36,7 @@ const emailConsumerCount = 10
 func NewEmailService(rabbit rabbitmq.RabbitMQ) *EmailService {
 	conf := configs.GetConfigs()
 
+	time.Sleep(time.Duration(configs.GetConfigs().InitialWaitForMailServer) * time.Second)
 	d := gomail.NewDialer(conf.MailServerHost, conf.MailServerPort, "", "")
 	d.TLSConfig = &tls.Config{InsecureSkipVerify: true} //not secure in production environment :: https://github.com/go-gomail/gomail
 

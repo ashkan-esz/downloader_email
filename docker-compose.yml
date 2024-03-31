@@ -18,6 +18,7 @@ services:
       MAILSERVER_PORT: 587
       MAILSERVER_USERNAME: webmaster@movietracker.mom
       LOG_PANIC_TRACE: 'true'
+      INITIAL_WAIT_FOR_MAIL_SERVER_SEC: 30
     #    ports:
     #      - "3000:3000"
     deploy:
