@@ -49,7 +49,7 @@ func Start(ctx context.Context) RabbitMQ {
 		consumerChannelPool: make([]*amqp.Channel, 0),
 		producerChannelPool: make([]*amqp.Channel, 0),
 	}
-	conf := ConfigConnection{URI: configs.GetConfigs().RabbitMqUrl, PrefetchCount: 3, PublishChannelPoolCount: 1}
+	conf := ConfigConnection{URI: configs.GetConfigs().RabbitMqUrl, PrefetchCount: 3, PublishChannelPoolCount: 0}
 	rabbitmq.Setup(ctx, conf)
 	return rabbitmq
 }
@@ -89,10 +89,11 @@ func (r *rabbit) Connect(config ConfigConnection) (notify chan *amqp.Error, err 
 	if err != nil {
 		return
 	}
-	r.consumerConn, err = amqp.Dial(config.URI)
-	if err != nil {
-		return
-	}
+	r.consumerConn = r.producerConn
+	//r.consumerConn, err = amqp.Dial(config.URI)
+	//if err != nil {
+	//	return
+	//}
 
 	r.chConsumer, err = r.consumerConn.Channel()
 	if err != nil {

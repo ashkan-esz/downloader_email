@@ -26,7 +26,6 @@ type EmailService struct {
 	rabbitmq rabbitmq.RabbitMQ
 	configs  configs.ConfigStruct
 	dialer   *gomail.Dialer
-	dial     gomail.SendCloser
 	dialLock *sync.RWMutex
 	open     bool
 }
@@ -36,21 +35,13 @@ const emailConsumerCount = 10
 func NewEmailService(rabbit rabbitmq.RabbitMQ) *EmailService {
 	conf := configs.GetConfigs()
 
-	time.Sleep(time.Duration(configs.GetConfigs().InitialWaitForMailServer) * time.Second)
 	d := gomail.NewDialer(conf.MailServerHost, conf.MailServerPort, "", "")
 	d.TLSConfig = &tls.Config{InsecureSkipVerify: true} //not secure in production environment :: https://github.com/go-gomail/gomail
-
-	dial, err := d.Dial()
-	if err != nil {
-		sentry.CaptureException(err)
-		panic(err)
-	}
 
 	emailSvc := EmailService{
 		rabbitmq: rabbit,
 		configs:  conf,
 		dialer:   d,
-		dial:     dial,
 		dialLock: &sync.RWMutex{},
 		open:     true,
 	}
@@ -209,29 +200,11 @@ func EmailConsumer(d *amqp.Delivery, extraConsumerData interface{}) {
 		return
 	}
 
-	emailSvc.dialLock.RLock()
-	defer emailSvc.dialLock.RUnlock()
-	err = gomail.Send(emailSvc.dial, m)
+	err = emailSvc.dialer.DialAndSend(m)
 
 	if err != nil {
 		message := fmt.Sprintf("error on sending [%s] email: %s", channelMessage.Type, err)
 		pkg.SaveError(message, err)
-		emailSvc.dialLock.RUnlock()
-		emailSvc.dialLock.Lock()
-		defer emailSvc.dialLock.Unlock()
-		dial, err := emailSvc.dialer.Dial()
-		if err != nil {
-			message := fmt.Sprintf("error on dialing smtp server: %s", err)
-			pkg.SaveError(message, err)
-			if err = d.Nack(false, true); err != nil {
-				message := fmt.Sprintf("error nacking [email] message: %s", err)
-				pkg.SaveError(message, err)
-			}
-		} else {
-			emailSvc.dial = dial
-			emailSvc.open = true
-		}
-
 		if err = d.Nack(false, true); err != nil {
 			message := fmt.Sprintf("error nacking [email] message: %s", err)
 			pkg.SaveError(message, err)

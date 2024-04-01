@@ -31,6 +31,8 @@ func main() {
 	// Flush buffered events before the program terminates.
 	defer sentry.Flush(2 * time.Second)
 
+	time.Sleep(time.Duration(configs.GetConfigs().InitialWaitForMailServer) * time.Second)
+
 	ctx, cancel := context.WithCancel(context.Background())
 	rabbit := rabbitmq.Start(ctx)
 	defer cancel()

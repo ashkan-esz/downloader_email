@@ -35,7 +35,7 @@ services:
     image: boky/postfix
     #    network_mode: host
     environment:
-      - ALLOWED_SENDER_DOMAINS=localhost movietracker.mom
+      - ALLOWED_SENDER_DOMAINS=localhost movietracker.mom chat.movietracker.mom
     ports:
       - "587:587"
       - "25:25"
