@@ -34,10 +34,10 @@ To run this project, you will need to add the following environment variables to
     1. https://hub.docker.com/r/boky/postfix
     2. https://docker-mailserver.github.io/docker-mailserver/latest/usage/
     3. create subdomain 'mail' point to server ip. example:: A   mail   SERVER_IP
-    4. create record 'MX' with name of domain and point to subdomain. example:: MX   movietracker.mom   mail.movietracker.mom  DNS only
-    5. add rDNS or PTR record to point to domain. example:: PTR   SERVER_IP   movietracker.mom  DNS only
-    6. add rDNS or PTR in server to point to domain. exmaple:: movietracker.mom
-    7. add SPF record to dns. example:: TXT   movietracker.mom   v=spf1 ip4:SERVER_IP include:movietracker.mom +all  DNS only
+    4. create record 'MX' with name of domain and point to subdomain. example:: MX   movietracker.site   mail.movietracker.site  DNS only
+    5. add rDNS or PTR record to point to domain. example:: PTR   SERVER_IP   movietracker.site  DNS only
+    6. add rDNS or PTR in server to point to domain. exmaple:: movietracker.site
+    7. add SPF record to dns. example:: TXT   movietracker.site   v=spf1 ip4:SERVER_IP include:movietracker.site +all  DNS only
 
 ## Future updates
 
