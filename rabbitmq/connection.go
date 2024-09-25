@@ -60,11 +60,14 @@ func Start(ctx context.Context) RabbitMQ {
 // Otherwise, it will run until the program ends.
 func (r *rabbit) Setup(ctx context.Context, config ConfigConnection) {
 	go func() {
+		counter := 0
 		for {
 			notifyClose, err := r.Connect(config)
 			if err != nil {
-				message := fmt.Sprintf("error connecting to rabbitmq: [%s]", err)
-				pkg.SaveError(message, err)
+				counter = counter + 1
+				if counter > 10 {
+					fmt.Printf("error connecting to rabbitmq: [%s]\n", err)
+				}
 				time.Sleep(time.Second * 5)
 				continue
 			}
