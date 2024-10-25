@@ -11,6 +11,7 @@ import (
 	"log"
 	"os"
 	"runtime/debug"
+	"strings"
 	"sync"
 	"time"
 
@@ -202,7 +203,7 @@ func EmailConsumer(d *amqp.Delivery, extraConsumerData interface{}) {
 
 	err = emailSvc.dialer.DialAndSend(m)
 
-	if err != nil {
+	if err != nil && !strings.Contains(err.Error(), "invalid address") {
 		message := fmt.Sprintf("error on sending [%s] email: %s", channelMessage.Type, err)
 		pkg.SaveError(message, err)
 		if err = d.Nack(false, true); err != nil {
