@@ -1,13 +1,15 @@
 # Email
 
-email sender service of the [downloader_api](https://github.com/ashkan-esz/downloader_api) project.
+Email sender service of the [downloader_api](https://github.com/ashkan-esz/downloader_api) project.
+        
+> This project has been merged into [episodify](https://github.com/ashkan-esz/episodify_api) project
 
 ## Motivation
 
 making email service a microservice and handle the entire project better
 
 ## How to use
-docker repository is ashkanaz2828/downloader_email
+Docker repository is ashkanaz2828/downloader_email
 
 ## Environment Variables
 
@@ -38,34 +40,3 @@ To run this project, you will need to add the following environment variables to
     5. add rDNS or PTR record to point to domain. example:: PTR   SERVER_IP   movietracker.site  DNS only
     6. add rDNS or PTR in server to point to domain. exmaple:: movietracker.site
     7. add SPF record to dns. example:: TXT   movietracker.site   v=spf1 ip4:SERVER_IP include:movietracker.site +all  DNS only
-
-## Future updates
-
-- [x]  Fast and light.
-- [ ]  Documentation.
-- [ ]  Write test.
-
-## Contributing
-
-Contributions are always welcome!
-
-See `contributing.md` for ways to get started.
-
-Please adhere to this project's `code of conduct`.
-
-## Support
-
-Contributions, issues, and feature requests are welcome!
-Give a ⭐️ if you like this project!
-
-## Related
-
-- [downloader_api](https://github.com/ashkan-esz/downloader_api)
-- [downloader_gochat](https://github.com/ashkan-esz/downloader_gochat)
-
-## Author
-
-**Ashkan Esz**
-
-- [Profile](https://github.com/ashkan-esz "Ashkan esz")
-- [Email](mailto:ashkanaz2828@gmail.com?subject=Hi "Hi!")
